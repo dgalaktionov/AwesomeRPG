@@ -38,8 +38,9 @@ screen dungeon():
     add Solid("#FFF"):
         ysize 4
         yalign 0.5
+        
+    $ entities = [Chicken(100,400), Chicken(400,400), Chicken(600,400)]
     
-    add Chicken(100,400)
-    add Chicken(400,400)
-    add Chicken(600,400)
+    for entity in entities:
+        add entity
         
