@@ -1,0 +1,17 @@
+ToDo
+
++Make abstract class for Chicken, initialize with position.
+Entity List for Dungeon screen.
+Health bar for every Chicken.
+Kill Chicken by clicking. Animate!
+Obtain money as reward for each frag.
+Dead chickens disappear after a while. Animate!
+
+Shop screen.
+
+DungeonV2: abstract Chicken to Enemy.
+Enemies fight back!
+HP bar and text.
+
+RPG system with weapons/equipment/items and dungeon floors.
+
