@@ -15,7 +15,13 @@ init python:
             
             #self.pos = (x, y)
             #self.exists = True
-            self.d = renpy.displayable(ImageReference("chicken live"))
+            self.max_health = 6
+            self.health = 6
+            
+            self.animation = ImageReference("chicken live")
+            self.healthbar = Bar(value=self.health, range=self.max_health, width=180, height=20)
+            
+            self.d = renpy.displayable(VBox(self.animation, self.healthbar))
             
         def render(self, width, height, st, at):
             return renpy.render(self.d, width, height, st, at)
