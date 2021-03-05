@@ -8,26 +8,54 @@ image chicken live:
     repeat
 
 init python:
+    import pygame
+    import operator
+
     class Chicken(renpy.Displayable):
     
         def __init__(self, x, y, **kwargs):
-            super(Chicken, self).__init__(anchor=(0.5,0), pos=(x,y), **kwargs)
+            super(Chicken, self).__init__(anchor=(0.5,1.0), pos=(x,y), **kwargs)
             
-            #self.pos = (x, y)
-            #self.exists = True
+            self.pos = (x, y)
             self.max_health = 6
-            self.health = 6
+            self.health = self.max_health
             
-            huediff = -180.0 + self.health*180.0/self.max_health
-            # TODO move healthbar and hue rendering to render(), there is a way to update it
             self.animation = ImageReference("chicken live")
-            self.healthbar = Transform(Bar(value=self.health, range=self.max_health, width=180, height=10, ysize=5), 
-                matrixcolor=HueMatrix(huediff))
+            self.healthbar = self.build_healthbar(self.health)
             
-            self.d = renpy.displayable(VBox(self.animation, self.healthbar))
+            # to be initialized in render():
+            self.bbox = pygame.Rect(0,0,0,0)
+            self.d = None
+            
+        def build_healthbar(self, h):
+            huediff = -180.0 + h*180.0/self.max_health
+            healthvalue = AnimatedValue(value=h, range=self.max_health, delay=0.25, old_value=self.health)
+            healthbar = Bar(value=healthvalue, range=self.max_health, width=180, height=10, ysize=5)
+            return Transform(healthbar, matrixcolor=HueMatrix(huediff))
+            
+        def take_damage(self):
+            if self.health > 0:
+                newhealth = self.health -  1
+                self.healthbar = self.build_healthbar(newhealth)
+                self.health = newhealth
             
         def render(self, width, height, st, at):
-            return renpy.render(self.d, width, height, st, at)
+            self.d = renpy.displayable(VBox(self.animation, self.healthbar))
+            r = renpy.render(self.d, width, height, st, at)
+            dims = r.get_size()
+            self.bbox = pygame.Rect((0,0), dims)
+            return r
+        
+        def event(self, ev, x, y, st):
+            if ev.type == pygame.MOUSEBUTTONDOWN and self.bbox.collidepoint(x,y):
+                self.take_damage()
+                renpy.redraw(self, 0)
+        
+        def per_interact(self):
+            pass
+        
+        def visit(self):
+            return [self.d]
 
 screen dungeon():
     tag awesomerpg
@@ -48,7 +76,7 @@ screen dungeon():
         ysize 4
         yalign 0.5
         
-    $ entities = [Chicken(100,400), Chicken(400,400), Chicken(600,400)]
+    $ entities = [Chicken(100,600), Chicken(400,600), Chicken(600,600)]
     
     for entity in entities:
         add entity
