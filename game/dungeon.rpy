@@ -9,7 +9,6 @@ image chicken live:
 
 init python:
     import pygame
-    import operator
 
     class Chicken(renpy.Displayable):
     
