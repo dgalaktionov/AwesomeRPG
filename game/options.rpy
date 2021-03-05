@@ -206,3 +206,8 @@ init python:
 ## by a slash.
 
 # define build.itch_project = "renpytom/test-project"
+
+
+
+#Model-Based rendering
+define config.gl2 = True

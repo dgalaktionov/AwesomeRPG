@@ -11,15 +11,18 @@ init python:
     class Chicken(renpy.Displayable):
     
         def __init__(self, x, y, **kwargs):
-            super(Chicken, self).__init__(anchor=(0.5,1), pos=(x,y), **kwargs)
+            super(Chicken, self).__init__(anchor=(0.5,0), pos=(x,y), **kwargs)
             
             #self.pos = (x, y)
             #self.exists = True
             self.max_health = 6
             self.health = 6
             
+            huediff = -180.0 + self.health*180.0/self.max_health
+            # TODO move healthbar and hue rendering to render(), there is a way to update it
             self.animation = ImageReference("chicken live")
-            self.healthbar = Bar(value=self.health, range=self.max_health, width=180, height=20)
+            self.healthbar = Transform(Bar(value=self.health, range=self.max_health, width=180, height=10, ysize=5), 
+                matrixcolor=HueMatrix(huediff))
             
             self.d = renpy.displayable(VBox(self.animation, self.healthbar))
             
