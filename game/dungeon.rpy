@@ -7,6 +7,29 @@ image chicken live:
     pause 1.0
     repeat
     
+image chicken hit:
+    "chicken pain.png"
+    pause 1.0
+    repeat
+    
+image chicken dead:
+    "chicken drumstick.png"
+    
+image cloud live:
+    "monstur.png"
+    pause 1.0
+    "monstur2.png"
+    pause 1.0
+    repeat
+    
+image cloud hit:
+    "monstur pain.png"
+    pause 1.0
+    repeat
+    
+image cloud dead:
+    "monstur pain.png"
+
 init python:
     import pygame
     
@@ -15,24 +38,24 @@ init python:
         LIVE = 1
         PAIN = 2
 
-    class Chicken(renpy.Displayable):
+    class Enemy(renpy.Displayable):
     
-        def __init__(self, x, y, **kwargs):
-            super(Chicken, self).__init__(anchor=(0.5,1.0), pos=(x,y), **kwargs)
+        def __init__(self, x, y, prefix, max_health=10, **kwargs):
+            super(Enemy, self).__init__(anchor=(0.5,1.0), pos=(x,y), **kwargs)
             
-            self.pos = (x, y)
-            self.max_health = 6
+            self.prefix = prefix
+            self.max_health = max_health
             self.health = self.max_health
             
-            self.animation = renpy.displayable("chicken live")
+            self.animation = renpy.displayable(self.prefix + " live")
             self.healthbar = self.build_healthbar(self.health)
             
             self.state = EnemyState.LIVE
             self.last_hit = 0
             
             # to be initialized in render():
-            self.bbox = pygame.Rect(0,0,0,0)
-            self.d = None
+            self.hitbox = pygame.Rect(0,0,0,0)
+            self.d = Null()
             
         def build_healthbar(self, h):
             huediff = -180.0 + h*180.0/self.max_health
@@ -48,28 +71,26 @@ init python:
                 self.last_hit = st
                 
                 if newhealth > 0:
-                    self.animation = renpy.displayable("chicken pain.png")
+                    self.animation = renpy.displayable(self.prefix + " hit")
                     self.state = EnemyState.PAIN
                 else:
-                    self.animation = renpy.displayable("chicken drumstick.png")
+                    self.animation = renpy.displayable(self.prefix + " dead")
                     self.state = EnemyState.DEAD
             
         def render(self, width, height, st, at):
             if self.state == EnemyState.PAIN and (st - self.last_hit) >= 1:
                 self.state = EnemyState.LIVE
-                self.animation = renpy.displayable("chicken live")
-            else :
-                renpy.redraw(self, 1)
+                self.animation = renpy.displayable(self.prefix + " live")
             
             self.d = renpy.displayable(VBox(self.animation, self.healthbar))
             r = renpy.render(self.d, width, height, st, at)
             dims = r.get_size()
-            self.bbox = pygame.Rect((0,0), dims)
+            self.hitbox = pygame.Rect((0,0), dims)
             
             return r
         
         def event(self, ev, x, y, st):
-            if ev.type == pygame.MOUSEBUTTONDOWN and self.bbox.collidepoint(x,y):
+            if ev.type == pygame.MOUSEBUTTONDOWN and self.hitbox.collidepoint(x,y):
                 self.take_damage(st)
                 renpy.redraw(self, 0)
         
@@ -78,6 +99,23 @@ init python:
         
         def visit(self):
             return [self.d]
+            
+            
+    class Chicken(Enemy):
+        def __init__(self, x, y, **kwargs):
+            super(Chicken, self).__init__(x,y, "chicken", max_health=6, **kwargs)
+            
+    class Cloud(Enemy):
+        def __init__(self, x, y, **kwargs):
+            super(Cloud, self).__init__(x,y, "cloud", max_health=4, **kwargs)
+            
+        def take_damage(self, st):
+            super(Cloud, self).take_damage(st)
+            
+            # disappear when dead
+            if self.state == EnemyState.DEAD:
+                self.animation = Null()
+                self.healthbar = Null()
 
 screen dungeon():
     tag awesomerpg
@@ -98,7 +136,8 @@ screen dungeon():
         ysize 4
         yalign 0.5
         
-    $ entities = [Chicken(100,600), Chicken(400,600), Chicken(600,600)]
+    $ entities = [Cloud(200,250), Cloud(500,350), Cloud(1000,250), 
+        Chicken(100,600), Chicken(400,600), Chicken(600,600)]
     
     for entity in entities:
         add entity

@@ -4,16 +4,16 @@ ToDo
 +Entity List for Dungeon screen.
 +Health bar for every Chicken.
 +Kill Chicken by clicking. Animate!
++Abstract Chicken to Enemy.
 Obtain money as reward for each frag.
-Dead chickens disappear after a while. Animate!
 
 Shop screen.
 
 DungeonV2: Enemies fight back!
 HP bar and text.
+Dead enemies disappear after a while. Animate!
 
 Level 2:
-Abstract Chicken to Enemy.
 Pass new entities and conditions as screen args.
 
 RPG system with weapons/equipment/items and dungeon floors.
