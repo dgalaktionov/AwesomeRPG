@@ -37,7 +37,7 @@ init python:
         def build_healthbar(self, h):
             huediff = -180.0 + h*180.0/self.max_health
             healthvalue = AnimatedValue(value=h, range=self.max_health, delay=0.25, old_value=self.health)
-            healthbar = Bar(value=healthvalue, range=self.max_health, width=180, height=10, ysize=5)
+            healthbar = Bar(value=healthvalue, range=self.max_health, width=180, height=10, ysize=5, xpos=0.5, xanchor=0.5)
             return Transform(healthbar, matrixcolor=HueMatrix(huediff))
             
         def take_damage(self, st):
