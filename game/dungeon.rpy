@@ -6,9 +6,14 @@ image chicken live:
     "chicken alt.png"
     pause 1.0
     repeat
-
+    
 init python:
     import pygame
+    
+    class EnemyState():
+        DEAD = 0
+        LIVE = 1
+        PAIN = 2
 
     class Chicken(renpy.Displayable):
     
@@ -19,8 +24,11 @@ init python:
             self.max_health = 6
             self.health = self.max_health
             
-            self.animation = ImageReference("chicken live")
+            self.animation = renpy.displayable("chicken live")
             self.healthbar = self.build_healthbar(self.health)
+            
+            self.state = EnemyState.LIVE
+            self.last_hit = 0
             
             # to be initialized in render():
             self.bbox = pygame.Rect(0,0,0,0)
@@ -32,22 +40,34 @@ init python:
             healthbar = Bar(value=healthvalue, range=self.max_health, width=180, height=10, ysize=5)
             return Transform(healthbar, matrixcolor=HueMatrix(huediff))
             
-        def take_damage(self):
+        def take_damage(self, st):
             if self.health > 0:
                 newhealth = self.health -  1
                 self.healthbar = self.build_healthbar(newhealth)
                 self.health = newhealth
+                self.animation = renpy.displayable("chicken pain.png")
+                self.last_hit = st
+                self.state = EnemyState.PAIN
             
         def render(self, width, height, st, at):
+            print(st)
+            
+            if self.state == EnemyState.PAIN and (st - self.last_hit) >= 1:
+                self.state = EnemyState.LIVE
+                self.animation = renpy.displayable("chicken live")
+            else :
+                renpy.redraw(self, 1)
+            
             self.d = renpy.displayable(VBox(self.animation, self.healthbar))
             r = renpy.render(self.d, width, height, st, at)
             dims = r.get_size()
             self.bbox = pygame.Rect((0,0), dims)
+            
             return r
         
         def event(self, ev, x, y, st):
             if ev.type == pygame.MOUSEBUTTONDOWN and self.bbox.collidepoint(x,y):
-                self.take_damage()
+                self.take_damage(st)
                 renpy.redraw(self, 0)
         
         def per_interact(self):
