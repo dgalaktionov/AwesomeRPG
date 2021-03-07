@@ -45,13 +45,16 @@ init python:
                 newhealth = self.health -  1
                 self.healthbar = self.build_healthbar(newhealth)
                 self.health = newhealth
-                self.animation = renpy.displayable("chicken pain.png")
                 self.last_hit = st
-                self.state = EnemyState.PAIN
+                
+                if newhealth > 0:
+                    self.animation = renpy.displayable("chicken pain.png")
+                    self.state = EnemyState.PAIN
+                else:
+                    self.animation = renpy.displayable("chicken drumstick.png")
+                    self.state = EnemyState.DEAD
             
         def render(self, width, height, st, at):
-            print(st)
-            
             if self.state == EnemyState.PAIN and (st - self.last_hit) >= 1:
                 self.state = EnemyState.LIVE
                 self.animation = renpy.displayable("chicken live")

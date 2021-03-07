@@ -3,7 +3,7 @@ ToDo
 +Make abstract class for Chicken, initialize with position.
 +Entity List for Dungeon screen.
 +Health bar for every Chicken.
-Kill Chicken by clicking. Animate!
++Kill Chicken by clicking. Animate!
 Obtain money as reward for each frag.
 Dead chickens disappear after a while. Animate!
 
