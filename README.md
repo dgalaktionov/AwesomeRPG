@@ -1,7 +1,7 @@
 # AwesomeRPG
 
-Not currently in a presentable state, unless you really want to see a bunch of crudely drawn chickens getting hit until transformed into KFC.
+Now with one level and a money system! Coming soon: shop system and fighting back enemies.
 
-![lvl1-2](https://user-images.githubusercontent.com/6043381/110228345-6a7ef500-7ece-11eb-92e0-2916664744f8.gif)
+![lvl1-3](https://user-images.githubusercontent.com/6043381/111235284-b6b0f000-85c6-11eb-9e78-2c07928ce40b.gif)
 
 Built with Renpy 7.4.1.
