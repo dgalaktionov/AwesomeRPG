@@ -5,7 +5,7 @@ ToDo
 +Health bar for every Chicken.
 +Kill Chicken by clicking. Animate!
 +Abstract Chicken to Enemy.
-Obtain money as reward for each frag.
++Obtain money as reward for each frag.
 
 Shop screen.
 

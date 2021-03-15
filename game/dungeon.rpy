@@ -40,12 +40,13 @@ init python:
 
     class Enemy(renpy.Displayable):
     
-        def __init__(self, x, y, prefix, max_health=10, **kwargs):
+        def __init__(self, x, y, prefix, max_health=10, reward=1, **kwargs):
             super(Enemy, self).__init__(anchor=(0.5,1.0), pos=(x,y), **kwargs)
             
             self.prefix = prefix
             self.max_health = max_health
             self.health = self.max_health
+            self.reward = reward
             
             self.animation = renpy.displayable(self.prefix + " live")
             self.healthbar = self.build_healthbar(self.health)
@@ -76,6 +77,7 @@ init python:
                 else:
                     self.animation = renpy.displayable(self.prefix + " dead")
                     self.state = EnemyState.DEAD
+                    inc_money(self.reward)
             
         def render(self, width, height, st, at):
             if self.state == EnemyState.PAIN and (st - self.last_hit) >= 1:
@@ -90,6 +92,8 @@ init python:
             return r
         
         def event(self, ev, x, y, st):
+            global player, moneyCounter
+            
             if ev.type == pygame.MOUSEBUTTONDOWN and self.hitbox.collidepoint(x,y):
                 self.take_damage(st)
                 renpy.redraw(self, 0)
@@ -103,7 +107,7 @@ init python:
             
     class Chicken(Enemy):
         def __init__(self, x, y, **kwargs):
-            super(Chicken, self).__init__(x,y, "chicken", max_health=6, **kwargs)
+            super(Chicken, self).__init__(x,y, "chicken", max_health=6, reward=2, **kwargs)
             
     class Cloud(Enemy):
         def __init__(self, x, y, **kwargs):
@@ -119,6 +123,8 @@ init python:
 
 screen dungeon():
     tag awesomerpg
+    
+    default initialized = False
 
     add Solid("#000")
     
@@ -136,9 +142,13 @@ screen dungeon():
         ysize 4
         yalign 0.5
         
+    
+    
     $ entities = [Cloud(200,250), Cloud(500,350), Cloud(1000,250), 
         Chicken(100,600), Chicken(400,600), Chicken(600,600)]
     
     for entity in entities:
         add entity
-        
+    
+    add moneyCounter
+    
