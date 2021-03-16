@@ -141,7 +141,6 @@ screen dungeon():
     add Solid("#FFF"):
         ysize 4
         yalign 0.5
-        
     
     
     $ entities = [Cloud(200,250), Cloud(500,350), Cloud(1000,250), 

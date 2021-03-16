@@ -5,7 +5,7 @@
 
 define e = Character("Eileen")
 
-default player = {"money": 0}
+default player = {"money": 100}
 
 init python:
 
@@ -46,7 +46,8 @@ label start:
     
     window hide
     
-    call screen dungeon
+    #call screen dungeon
+    call screen shop
     
     window show
 
